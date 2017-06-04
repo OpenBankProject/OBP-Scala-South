@@ -1,0 +1,18 @@
+<configuration>
+
+  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>%d{yyyy-MM-dd HH:mm:ss} %t %c{0} [%p] %m%n</pattern>
+    </encoder>
+  </appender>
+
+  <root level="DEBUG">
+    <appender-ref ref="STDOUT"/>
+  </root>
+  <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+  <logger name="ch.qos.logback" level="OFF" additivity="false" />
+  <logger name="akka" level="INFO" />
+  <logger name="org.apache.kafka.clients" level="ERROR"/>
+  <logger name="org.apache.kafka.common.utils.AppInfoParser" level="OFF"/>
+  <logger name="io.confluent.kafka.serializers.KafkaAvroDeserializerConfig" level="OFF"/>
+</configuration>

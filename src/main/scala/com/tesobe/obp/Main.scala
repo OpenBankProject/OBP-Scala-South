@@ -1,21 +1,36 @@
 package com.tesobe.obp
 
-import akka.actor.ActorSystem
-import akka.stream.ActorMaterializer
-import com.typesafe.config.ConfigFactory
+import akka.actor.{ActorSystem, Props}
+import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
+import com.typesafe.scalalogging.StrictLogging
+
+import scala.concurrent.Await
+import scala.concurrent.duration.Duration
 
 /**
   * Created by slavisa on 12/27/16.
   */
-object Main extends App with KafkaConfig {
+object Main extends App with StrictLogging with KafkaConfig {
 
-  val config = ConfigFactory.load()
   val systemName = config.getString("system-name")
 
+  val decider: Supervision.Decider = {
+    case e: Throwable =>
+      logger.error("Exception occurred, stopping...")
+      Supervision.Restart
+    case _ =>
+      logger.error("Unknown problem, stopping...")
+      Supervision.Restart
+  }
+
   implicit val system = ActorSystem(s"$systemName-module")
-  implicit val materializer = ActorMaterializer()
+  implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system).withSupervisionStrategy(decider))
   implicit val executionContext = system.dispatcher
 
-  println("........................")
+  val actorOrchestration = system.actorOf(Props(new ActorOrchestration()), "ActorOrchestration")
 
+  import SouthKafkaStreamsActor._
+  actorOrchestration ! Init(Topic("Request", "Response"))
+
+  Await.ready(system.whenTerminated, Duration.Inf)
 }

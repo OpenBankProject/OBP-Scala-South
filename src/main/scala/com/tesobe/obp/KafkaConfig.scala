@@ -3,19 +3,27 @@ package com.tesobe.obp
 import java.util.UUID
 
 import com.typesafe.config.ConfigFactory
+
+import scala.concurrent.duration._
 /**
   * Created by slavisa on 12/27/16.
   */
 trait KafkaConfig {
 
+  val config = ConfigFactory.load()
+
   def bootstrapServers = {
-    val config = ConfigFactory.load()
     Option(config.getString("bootstrap.servers")).getOrElse {
       throw new IllegalArgumentException("Environment variable bootstrap.servers is missing. Start the application with -Dbootstrap.servers=\"localhost:9092\"")
     }
   }
 
-  def clientId = UUID.randomUUID().toString
-  def autoOffsetResetConfig = "earliest"
+  val clientId = UUID.randomUUID().toString
+  val groupId = "obp-socgen"//UUID.randomUUID().toString
+
+  val autoOffsetResetConfig = "earliest"
+  val maxWakeups = 50
+  //TODO should be less then container's timeout
+  val completionTimeout =  FiniteDuration(config.getInt("business.timeout")*1000 - 450, MILLISECONDS)
 
 }
