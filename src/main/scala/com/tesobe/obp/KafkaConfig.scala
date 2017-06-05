@@ -23,7 +23,6 @@ trait KafkaConfig {
 
   val autoOffsetResetConfig = "earliest"
   val maxWakeups = 50
-  //TODO should be less then container's timeout
   val completionTimeout =  FiniteDuration(config.getInt("business.timeout")*1000 - 450, MILLISECONDS)
 
 }

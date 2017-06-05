@@ -4,7 +4,7 @@ version := "1.0"
 
 organization := "com.tesobe"
 
-scalaVersion := "2.12.1"
+scalaVersion := "2.12.2"
 
 resolvers ++= Seq(
   Resolver.bintrayRepo("hseeberger", "maven"),
@@ -15,7 +15,8 @@ resolvers ++= Seq(
 
 libraryDependencies ++= {
   val akkaV = "2.4.16"
-  val akkaKafkaV = "0.14"
+  val akkaKafkaV = "0.16"
+  val akkaHttpV = "10.0.4"
   val avro4sV = "1.6.4"
   val avroV = "1.8.1"
   val kafkaV = "0.10.0.1"
@@ -28,7 +29,8 @@ libraryDependencies ++= {
     "com.sksamuel.avro4s"                 %% "avro4s-core"                % avro4sV,
     "org.apache.avro"                      % "avro"                       % avroV,
     "ch.qos.logback"                       % "logback-classic"            % logbackVersion,
-    "com.typesafe.scala-logging"   % "scala-logging_2.12"           % scalaLoggingVersion
+    "com.typesafe.akka"                   %% "akka-http-spray-json"       % akkaHttpV,
+    "com.typesafe.scala-logging"           % "scala-logging_2.12"         % scalaLoggingVersion
   )
 }
 

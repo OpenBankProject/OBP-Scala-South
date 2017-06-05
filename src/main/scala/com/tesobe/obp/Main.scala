@@ -27,10 +27,10 @@ object Main extends App with StrictLogging with KafkaConfig {
   implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system).withSupervisionStrategy(decider))
   implicit val executionContext = system.dispatcher
 
-  val actorOrchestration = system.actorOf(Props(new ActorOrchestration()), "ActorOrchestration")
+  val actorOrchestration = system.actorOf(Props(new ActorOrchestration()), ActorOrchestration.name)
 
   import SouthKafkaStreamsActor._
-  actorOrchestration ! Init(Topic("Request", "Response"))
+  actorOrchestration ! Topic("Request", "Response")
 
   Await.ready(system.whenTerminated, Duration.Inf)
 }
