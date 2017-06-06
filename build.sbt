@@ -22,6 +22,7 @@ libraryDependencies ++= {
   val kafkaV = "0.10.0.1"
   val logbackVersion = "1.1.3"
   val scalaLoggingVersion = "3.5.0"
+  val circeVersion = "0.7.0"
 
   Seq(
     "com.typesafe.akka"                   %% "akka-slf4j"             % akkaV,
@@ -30,6 +31,13 @@ libraryDependencies ++= {
     "org.apache.avro"                      % "avro"                       % avroV,
     "ch.qos.logback"                       % "logback-classic"            % logbackVersion,
     "com.typesafe.akka"                   %% "akka-http-spray-json"       % akkaHttpV,
+    "io.circe"                             % "circe-core_2.12"            % circeVersion,
+    "io.circe"                             % "circe-parser_2.12"          % circeVersion,
+    "io.circe"                             % "circe-generic_2.12"         % circeVersion,
+    "de.knutwalker"                       %% "akka-stream-circe"           % "3.3.0",
+    "de.knutwalker"                       %% "akka-stream-json"           % "3.3.0",
+    "de.knutwalker"                       %% "akka-http-json"             % "3.3.0",
+    "org.apache.camel"                     % "camel-stream"               % "2.19.0",
     "com.typesafe.scala-logging"           % "scala-logging_2.12"         % scalaLoggingVersion
   )
 }
