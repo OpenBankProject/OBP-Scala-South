@@ -23,6 +23,8 @@ trait KafkaConfig {
 
   val autoOffsetResetConfig = "earliest"
   val maxWakeups = 50
-  val completionTimeout =  FiniteDuration(config.getInt("business.timeout")*1000 - 450, MILLISECONDS)
+  val completionTimeout =  FiniteDuration(config.getInt("kafka.request.processor.timeout")*1000 - 450, MILLISECONDS)
 
+  val targetSource = config.getString("kafka.request.target.source")
+  val processorName = config.getString("kafka.request.processor.name")
 }

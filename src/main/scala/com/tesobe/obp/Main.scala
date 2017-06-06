@@ -29,8 +29,7 @@ object Main extends App with StrictLogging with KafkaConfig {
 
   val actorOrchestration = system.actorOf(Props(new ActorOrchestration()), ActorOrchestration.name)
 
-  import SouthKafkaStreamsActor._
-  actorOrchestration ! Topic("Request", "Response")
+  actorOrchestration ! ProcessorFactory.getProcessor
 
   Await.ready(system.whenTerminated, Duration.Inf)
 }
