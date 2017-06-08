@@ -38,7 +38,9 @@ libraryDependencies ++= {
     "de.knutwalker"                       %% "akka-stream-json"           % "3.3.0",
     "de.knutwalker"                       %% "akka-http-json"             % "3.3.0",
     "org.apache.camel"                     % "camel-stream"               % "2.19.0",
-    "com.typesafe.scala-logging"           % "scala-logging_2.12"         % scalaLoggingVersion
+  "co.fs2" %% "fs2-core" % "0.9.6",
+  "co.fs2" %% "fs2-io" % "0.9.6",
+  "com.typesafe.scala-logging"           % "scala-logging_2.12"         % scalaLoggingVersion
   )
 }
 
