@@ -30,7 +30,6 @@ libraryDependencies ++= {
     "com.sksamuel.avro4s"                 %% "avro4s-core"                % avro4sV,
     "org.apache.avro"                      % "avro"                       % avroV,
     "ch.qos.logback"                       % "logback-classic"            % logbackVersion,
-    "com.typesafe.akka"                   %% "akka-http-spray-json"       % akkaHttpV,
     "io.circe"                             % "circe-core_2.12"            % circeVersion,
     "io.circe"                             % "circe-parser_2.12"          % circeVersion,
     "io.circe"                             % "circe-generic_2.12"         % circeVersion,
