@@ -31,5 +31,7 @@ object Main extends App with StrictLogging with KafkaConfig {
 
   actorOrchestration ! ProcessorFactory.getProcessor
 
+//  import fs2.Stream
+
   Await.ready(system.whenTerminated, Duration.Inf)
 }

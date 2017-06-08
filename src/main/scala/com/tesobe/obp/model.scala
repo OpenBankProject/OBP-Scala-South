@@ -83,9 +83,9 @@ case class Transaction(id: Option[String],
                        fromAccountId: Option[String],
                        transactionAmount: Option[String],
                        toCounterpartyId: Option[String],
-                       //                       toCounterpartyRoutingScheme: Option[String],
-                       //                       fromAccountName: Option[String],
-                       //                       transactionChargeCurrency: Option[String],
+                       toCounterpartyRoutingScheme: Option[String],
+                       fromAccountName: Option[String],
+                       transactionChargeCurrency: Option[String],
                        transactionId: Option[String]
                       )
 

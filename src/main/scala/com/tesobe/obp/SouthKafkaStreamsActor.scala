@@ -17,7 +17,7 @@ import scala.concurrent.Future
 /**
   * Created by slavisa on 6/4/17.
   */
-class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with KafkaConfig with JSonSupport with StrictLogging {
+class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with KafkaConfig with StrictLogging {
 
   import SouthKafkaStreamsActor._
   import context.dispatcher
