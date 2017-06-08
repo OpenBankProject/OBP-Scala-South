@@ -1,0 +1,11 @@
+/*/*.iml
+/**/*.iml
+/*/build
+/build
+target/
+.idea
+*/target
+/.gradle
+/rethinkdb_data/
+/.ensime
+/.ensime_cache.d/
