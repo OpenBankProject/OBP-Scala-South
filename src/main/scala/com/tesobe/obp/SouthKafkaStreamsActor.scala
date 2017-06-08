@@ -67,8 +67,11 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
   }
 
   override def receive: Receive = {
-    case tp: (Topic, Business) =>
-      initStream(tp)
+    case tp: TopicBusiness =>
+      initStream(tp.topic, tp.business)
+    case _ =>
+      logger.error("Unexpected message")
+      throw new Exception("Unexpected message")
   }
 
   private def initStream(tp: (Topic, Business)) = {
@@ -98,6 +101,8 @@ object SouthKafkaStreamsActor {
   type Business = CommittableMessage[String, String] => Future[(CommittableMessage[String, String], String)]
 
   case class Topic(request: String, response: String)
+
+  case class TopicBusiness(topic: Topic, business: Business)
 
   final val name = "SouthKafkaStreamsActor"
 
