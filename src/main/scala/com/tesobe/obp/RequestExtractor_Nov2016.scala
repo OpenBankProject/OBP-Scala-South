@@ -9,7 +9,7 @@ object RequestExtractor_Nov2016 extends RequestExtractor{
     if (request.version == "Nov2016") {
       (request.target.get, request.name.get)
     } else {
-      ("" , "")
+      (request.target.get, request.name.get)
     }
   }
 

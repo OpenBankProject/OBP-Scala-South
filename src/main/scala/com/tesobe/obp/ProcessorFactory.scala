@@ -5,12 +5,14 @@ import com.tesobe.obp.SouthKafkaStreamsActor.{Topic, TopicBusiness}
 /**
   * Created by slavisa on 6/6/17.
   */
-object ProcessorFactory extends KafkaConfig {
+object ProcessorFactory extends Config {
 
   def getProcessor = {
     processorName match {
-      case "circe_Nov2016" => TopicBusiness(Topic("Request", "Response"), CirceProcessor(RequestExtractor_Nov2016)(Main.executionContext, Main.materializer).processor)
-      case _ => TopicBusiness(Topic("Request", "Response"), CirceProcessor(RequestExtractor_Nov2016)(Main.executionContext, Main.materializer).processor)
+      case "localFile" => TopicBusiness(topic, LocalProcessor(RequestExtractor_Nov2016)(Main.executionContext, Main.materializer).processor)
+      case "mockedSopra" => TopicBusiness(topic, LocalProcessor(RequestExtractor_Nov2016)(Main.executionContext, Main.materializer).processor)
+      case "sopra" => TopicBusiness(topic, LocalProcessor(RequestExtractor_Nov2016)(Main.executionContext, Main.materializer).processor)
+      case _ => TopicBusiness(topic, LocalProcessor(RequestExtractor_Nov2016)(Main.executionContext, Main.materializer).processor)
     }
   }
 }

@@ -10,7 +10,7 @@ import scala.concurrent.duration.Duration
 /**
   * Created by slavisa on 12/27/16.
   */
-object Main extends App with StrictLogging with KafkaConfig {
+object Main extends App with StrictLogging with Config {
 
   val systemName = config.getString("system-name")
 

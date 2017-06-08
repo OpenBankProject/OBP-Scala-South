@@ -1,4 +1,4 @@
-package com.tesobe.obp
+package com.tesobe.obp.nov2016
 
 /**
   * Created by slavisa on 6/5/17.
@@ -136,12 +136,6 @@ case class Bank(website: Option[String],
                 fullName: Option[String],
                 shortName: Option[String],
                 id: Option[String])
-
-case class BankN(bankId: Option[String],
-                 name: Option[String],
-                 logo: Option[String],
-                 url: Option[String]
-                )
 
 case class Product(category: Option[String],
                    superFamily: Option[String],

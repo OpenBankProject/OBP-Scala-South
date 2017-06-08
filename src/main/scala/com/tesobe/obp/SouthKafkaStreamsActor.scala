@@ -17,7 +17,7 @@ import scala.concurrent.Future
 /**
   * Created by slavisa on 6/4/17.
   */
-class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with KafkaConfig with StrictLogging {
+class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with Config with StrictLogging {
 
   import SouthKafkaStreamsActor._
   import context.dispatcher
@@ -84,18 +84,14 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
 case class Request(name: Option[String],
                    username: Option[String],
                    password: Option[String],
-                   version: String,
+                   messageFormat: Option[String],
+                   action: Option[String],
+                   version: Option[String],
                    north: Option[String],
                    target: Option[String],
                    userId: Option[String],
                    bankId: Option[String],
                    source: Option[String])
-case class Response(count: Option[Long] = None,
-                    data: Seq[BankN],
-                    state: Option[String] = None,
-                    pager: Option[String] = None,
-                    target: Option[String] = None
-                   )
 
 object SouthKafkaStreamsActor {
   type Business = CommittableMessage[String, String] => Future[(CommittableMessage[String, String], String)]
