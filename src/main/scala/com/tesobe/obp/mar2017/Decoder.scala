@@ -24,11 +24,11 @@ trait Decoder {
       r <- Right(extractQuery(request) match {
         case Some("obp.get.Bank") =>
           val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
-          (Response(data = example.banks.filter(_.id == bankId).headOption.toSeq))
+          (Response(data = example.banks.filter(_.id == bankId).headOption.map(x => BankN(BankId(x.id), x.shortName, x.fullName, x.logo, x.website)).toSeq))
         case Some("obp.get.Banks") =>
-          Response(data = example.banks)
+          Response(data = example.banks.map(x => BankN(BankId(x.id), x.shortName, x.fullName, x.logo, x.website)))
         case _ =>
-          Response(data = example.banks)
+          Response(data = example.banks.map(x => BankN(BankId(x.id), x.shortName, x.fullName, x.logo, x.website)))
       }).right
     } yield {
       r.asJson.noSpaces
@@ -40,8 +40,18 @@ trait Decoder {
     request.action
   }
 
+  case class BankId(val value: String)
+
+  case class BankN(
+                    bankId: BankId,
+                    shortName: String,
+                    fullName: String,
+                    logoUrl: String,
+                    websiteUrl: String
+                  )
+
   case class Response(count: Option[Long] = None,
-                      data: Seq[Banks],
+                      data: Seq[BankN],
                       state: Option[String] = None,
                       pager: Option[String] = None,
                       target: Option[String] = None
