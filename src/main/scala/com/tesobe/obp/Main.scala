@@ -2,6 +2,7 @@ package com.tesobe.obp
 
 import akka.actor.{ActorSystem, Props}
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
+import com.tesobe.obp.SouthKafkaStreamsActor.TopicBusiness
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.Await
@@ -11,6 +12,15 @@ import scala.concurrent.duration.Duration
   * Created by slavisa on 12/27/16.
   */
 object Main extends App with StrictLogging with Config {
+
+  def getProcessor = {
+    processorName match {
+      case "localFile" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
+      case "mockedSopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
+      case "sopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
+      case _ => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
+    }
+  }
 
   val systemName = config.getString("system-name")
 
@@ -29,7 +39,7 @@ object Main extends App with StrictLogging with Config {
 
   val actorOrchestration = system.actorOf(Props(new ActorOrchestration()), ActorOrchestration.name)
 
-  actorOrchestration ! ProcessorFactory.getProcessor
+  actorOrchestration ! getProcessor
 
 //  import fs2.Stream
 

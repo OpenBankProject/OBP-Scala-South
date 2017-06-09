@@ -11,13 +11,11 @@ import io.circe.syntax._
   */
 trait Decoder {
 
-  def response(request: Request): Either[Error, String] = {
-    for {
-      example <- {
-        val json = scala.io.Source.fromResource("example_import_Nov2016.json").getLines().mkString
-        decode[com.tesobe.obp.nov2016.Example](json).right
-      }
-      r <- Right(extractQuery(request) match {
+  def response(request: Request): String = {
+    val json = scala.io.Source.fromResource("example_import_Nov2016.json").getLines().mkString
+    val r = decode[com.tesobe.obp.nov2016.Example](json) match {
+      case Left(err) => err.getMessage
+      case Right(example) => extractQuery(request) match {
         case ("bank", "get") =>
           val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
           (Response(data = example.banks.filter(_.id == bankId).headOption.map(x => BankN(x.id, x.fullName, x.logo, x.website)).toSeq))
@@ -26,10 +24,9 @@ trait Decoder {
           r
         case _ =>
           Response(data = example.banks.map(x => BankN(x.id, x.fullName, x.logo, x.website)))
-      }).right
-    } yield {
-      r.asJson.noSpaces
+      }
     }
+    r.asJson.noSpaces
   }
 
 
