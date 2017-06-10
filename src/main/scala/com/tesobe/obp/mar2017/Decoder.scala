@@ -11,48 +11,63 @@ import io.circe.syntax._
   */
 trait Decoder {
 
+  val BankNotFound = "OBP-30001: Bank not found. Please specify a valid value for BANK_ID."
+
   def response(request: Request): String = {
     val resource = scala.io.Source.fromResource("example_import_mar2017.json")
     val lines = resource.getLines()
     val json = lines.mkString
     val d = decode[com.tesobe.obp.mar2017.Example](json)
     d match {
-      case Left(err) => err.getMessage
+      case Left(err) => Map("data" -> err.getMessage).asJson.noSpaces
       case Right(example) =>
-        val r = extractQuery(request) match {
-        case Some("obp.get.Bank") =>
-          val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
-          (Response(data = example.banks.filter(_.id == bankId).headOption.map(x => BankN(BankId(x.id), x.shortName, x.fullName, x.logo, x.website)).toSeq))
-        case Some("obp.get.Banks") =>
-          Response(data = example.banks.map(x => BankN(BankId(x.id), x.shortName, x.fullName, x.logo, x.website)))
-        case _ =>
-          Response(data = example.banks.map(x => BankN(BankId(x.id), x.shortName, x.fullName, x.logo, x.website)))
-      }
-      r.asJson.noSpaces
+        extractQuery(request) match {
+          case Some("obp.get.Bank") =>
+            val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
+            example.banks.filter(_.id == bankId).headOption match {
+              case Some(x) => Map("data" -> mapBankN(x)).asJson.noSpaces
+              case None => Map("data" -> BankN(Some(BankNotFound), None, None, None, None)).asJson.noSpaces
+            }
+          case Some("obp.get.Banks") =>
+            val data = example.banks.map(x => mapBankN(x))
+            Map("data" -> data).asJson.noSpaces
+
+          case Some("obp.get.User") =>
+            example.users.filter(_.displayName == request.username).filter(_.password == request.password).headOption match {
+              case Some(x) => Map("data" -> mapUserN(x)).asJson.noSpaces
+              case None => Map("data" -> UserN(Some(BankNotFound), None, None)).asJson.noSpaces
+            }
+          case _ =>
+            Map("data" -> "Error, unrecognised request").asJson.noSpaces
+        }
     }
   }
 
+  private def mapBankN(x: Bank) = {
+    BankN(None, x.id, x.fullName, x.logo, x.website)
+  }
+
+  private def mapUserN(x: User) = {
+    UserN(None, x.email, x.displayName)
+  }
 
   private def extractQuery(request: Request): Option[String] = {
     request.action
   }
 
-  case class BankId(val value: String)
-
-  case class BankN(
-                    bankId: BankId,
-                    shortName: String,
-                    fullName: String,
-                    logoUrl: String,
-                    websiteUrl: String
+  case class UserN(
+                    errorCode: Option[String],
+                    email: Option[String],
+                    displayName: Option[String]
                   )
 
-  case class Response(count: Option[Long] = None,
-                      data: Seq[BankN],
-                      state: Option[String] = None,
-                      pager: Option[String] = None,
-                      target: Option[String] = None
-                     )
+  case class BankN(
+                    errorCode: Option[String],
+                    bankId: Option[String],
+                    name: Option[String],
+                    logo: Option[String],
+                    url: Option[String]
+                  )
 
 }
 
