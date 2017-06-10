@@ -11,22 +11,26 @@ import io.circe.syntax._
   */
 trait Decoder {
 
+  val BankNotFound = "OBP-30001: Bank not found. Please specify a valid value for BANK_ID."
+
   def response(request: Request): String = {
     val json = scala.io.Source.fromResource("example_import_Nov2016.json").getLines().mkString
-    val r = decode[com.tesobe.obp.nov2016.Example](json) match {
+    decode[com.tesobe.obp.nov2016.Example](json) match {
       case Left(err) => err.getMessage
       case Right(example) => extractQuery(request) match {
         case ("bank", "get") =>
           val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
-          (Response(data = example.banks.filter(_.id == bankId).headOption.map(x => BankN(x.id, x.fullName, x.logo, x.website)).toSeq))
+          example.banks.filter(_.id == bankId).headOption match {
+            case Some(x) => Map("data" -> BankN(x.id, x.fullName, x.logo, x.website)).asJson.noSpaces
+            case None => Map("data" -> BankNotFound).asJson.noSpaces
+          }
         case ("banks", "get") =>
-          val r = Response(data = example.banks.map(x => BankN(x.id, x.fullName, x.logo, x.website)))
-          r
+          val data = example.banks.map(x => BankN(x.id, x.fullName, x.logo, x.website))
+          Map("data" -> data).asJson.noSpaces
         case _ =>
-          Response(data = example.banks.map(x => BankN(x.id, x.fullName, x.logo, x.website)))
+          Map("data" -> "Error, unrecognised request").asJson.noSpaces
       }
     }
-    r.asJson.noSpaces
   }
 
 
@@ -39,13 +43,6 @@ trait Decoder {
                    logo: Option[String],
                    url: Option[String]
                   )
-
-  case class Response(count: Option[Long] = None,
-                      data: Seq[BankN],
-                      state: Option[String] = None,
-                      pager: Option[String] = None,
-                      target: Option[String] = None
-                     )
 
 }
 
