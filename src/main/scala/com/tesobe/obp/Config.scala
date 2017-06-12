@@ -26,10 +26,10 @@ trait Config {
 
   val autoOffsetResetConfig = "earliest"
   val maxWakeups = 50
-  val completionTimeout = FiniteDuration(config.getInt("kafka.request.processor.timeout") * 1000 - 450, MILLISECONDS)
+  val completionTimeout = FiniteDuration(config.getInt("kafka.request.generic.timeout") * 1000 - 450, MILLISECONDS)
 
   val targetSource = config.getString("kafka.request.target.source")
-  val processorName = config.getString("kafka.request.processor.name")
+  val processorName = config.getString("kafka.request.generic.name")
 
   val requestTopic = config.getString("kafka.request.topic.request")
   val responseTopic = config.getString("kafka.request.topic.response")
@@ -37,6 +37,16 @@ trait Config {
 
   val topic = Topic(requestTopic, responseTopic)
 
+  /**
+    * Helper for getting kafka topics from case classes.
+    *
+    * @param caseClass
+    * @return pair of strings representing kafka topics
+    * Note the form:
+    * <li> "obp" - just as an ID</li>
+    * <li> "Q" or "R" which stands from Query/Response </li>
+    * <li> case class simple name without "$" because it is invalid char for kafka topic name</li>
+    */
   def caseClassToTopic(caseClass: Any): Topic =
     Topic("obp.Q." + caseClass.getClass.getSimpleName.replace("$", ""),
       "obp.R." + caseClass.getClass.getSimpleName.replace("$", ""))

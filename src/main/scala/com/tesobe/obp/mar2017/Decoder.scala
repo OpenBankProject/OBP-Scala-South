@@ -7,6 +7,8 @@ import io.circe.syntax._
 
 
 /**
+  * Responsible for processing requests based on local example_import_mar2017.json file.
+  *
   * Created by slavisa on 6/8/17.
   */
 trait Decoder {
@@ -55,6 +57,10 @@ trait Decoder {
     request.action
   }
 
+  /**
+    * All subsequent case classes must be the same structure as it is defined on North Side.
+    *
+    */
   case class UserN(
                     errorCode: Option[String],
                     email: Option[String],

@@ -10,24 +10,33 @@ import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /**
+  * Initialize actor system and as final step sends message to ActorOrchestration to initialize all actors that will be used.
+  *
   * Created by slavisa on 12/27/16.
   */
 object Main extends App with StrictLogging with Config {
 
+  /**
+    *
+    * @return sequence of functions which will be applied in processing of North Side messages
+    */
   def getProcessor = {
     processorName match {
       case "localFile" => Seq(
-        TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor),
-        TopicBusiness(caseClassToTopic(GetBanks), LocalProcessor()(executionContext, materializer).getBanks)
+        TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic),
+        TopicBusiness(caseClassToTopic(GetBanks), LocalProcessor()(executionContext, materializer).banks)
       )
-      case "mockedSopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
-      case "sopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
-      case _ => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
+      case "mockedSopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic)
+      case "sopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic)
+      case _ => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic)
     }
   }
 
   val systemName = config.getString("system-name")
 
+  /**
+    * Reaction on unexpected events
+    */
   val decider: Supervision.Decider = {
     case e: Throwable =>
       logger.error("Exception occurred, stopping..." + e)
@@ -37,7 +46,7 @@ object Main extends App with StrictLogging with Config {
       Supervision.Restart
   }
 
-  implicit val system = ActorSystem(s"$systemName-module")
+  implicit val system = ActorSystem(s"$systemName")
   implicit val materializer = ActorMaterializer(ActorMaterializerSettings(system).withSupervisionStrategy(decider))
   implicit val executionContext = system.dispatcher
 
