@@ -3,6 +3,7 @@ package com.tesobe.obp
 import akka.actor.{ActorSystem, Props}
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.tesobe.obp.SouthKafkaStreamsActor.TopicBusiness
+import com.tesobe.obp.jun2017.GetBanks
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.Await
@@ -15,7 +16,10 @@ object Main extends App with StrictLogging with Config {
 
   def getProcessor = {
     processorName match {
-      case "localFile" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
+      case "localFile" => Seq(
+        TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor),
+        TopicBusiness(caseClassToTopic(GetBanks), LocalProcessor()(executionContext, materializer).getBanks)
+      )
       case "mockedSopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
       case "sopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
       case _ => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).processor)
@@ -26,7 +30,7 @@ object Main extends App with StrictLogging with Config {
 
   val decider: Supervision.Decider = {
     case e: Throwable =>
-      logger.error("Exception occurred, stopping...")
+      logger.error("Exception occurred, stopping..." + e)
       Supervision.Restart
     case _ =>
       logger.error("Unknown problem, stopping...")
