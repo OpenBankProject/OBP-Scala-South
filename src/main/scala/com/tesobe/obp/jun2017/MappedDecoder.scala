@@ -1,23 +1,21 @@
-package com.tesobe.obp.mar2017
+package com.tesobe.obp.jun2017
 
 import com.tesobe.obp.{Request}
 import io.circe.parser.decode
 import io.circe.generic.auto._
 import io.circe.syntax._
-
-
 /**
-  * Created by slavisa on 6/8/17.
+  * Created by slavisa on 6/11/17.
   */
-trait Decoder {
+trait MappedDecoder {
 
   val BankNotFound = "OBP-30001: Bank not found. Please specify a valid value for BANK_ID."
 
   def response(request: Request): String = {
-    val resource = scala.io.Source.fromResource("example_import_mar2017.json")
+    val resource = scala.io.Source.fromResource("example_import_jun2017.json")
     val lines = resource.getLines()
     val json = lines.mkString
-    val d = decode[com.tesobe.obp.mar2017.Example](json)
+    val d = decode[com.tesobe.obp.jun2017.Example](json)
     d match {
       case Left(err) => Map("data" -> err.getMessage).asJson.noSpaces
       case Right(example) =>
@@ -26,10 +24,10 @@ trait Decoder {
             val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
             example.banks.filter(_.id == bankId).headOption match {
               case Some(x) => Map("data" -> mapBankN(x)).asJson.noSpaces
-              case None => Map("data" -> BankN(Some(BankNotFound), None, None, None, None)).asJson.noSpaces
+              case None => Map("data" -> InboundBank(BankNotFound, "", "", "", "")).asJson.noSpaces
             }
           case Some("obp.get.Banks") =>
-            val data = example.banks.map(x => mapBankN(x))
+            val data = example.banks.map(mapBankN)
             Map("data" -> data).asJson.noSpaces
 
           case Some("obp.get.User") =>
@@ -43,8 +41,8 @@ trait Decoder {
     }
   }
 
-  private def mapBankN(x: Bank) = {
-    BankN(None, x.id, x.fullName, x.logo, x.website)
+  def mapBankN(x: Bank) = {
+    InboundBank("", x.id.getOrElse(""), x.fullName.getOrElse(""), x.logo.getOrElse(""), x.website.getOrElse(""))
   }
 
   private def mapUserN(x: User) = {
@@ -55,21 +53,4 @@ trait Decoder {
     request.action
   }
 
-  case class UserN(
-                    errorCode: Option[String],
-                    email: Option[String],
-                    displayName: Option[String]
-                  )
-
-  case class BankN(
-                    errorCode: Option[String],
-                    bankId: Option[String],
-                    name: Option[String],
-                    logo: Option[String],
-                    url: Option[String]
-                  )
-
 }
-
-
-object Decoder extends Decoder

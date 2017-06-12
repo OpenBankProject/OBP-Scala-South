@@ -10,6 +10,7 @@ import akka.stream.scaladsl.Source
 import com.typesafe.scalalogging.StrictLogging
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
+import org.apache.kafka.common.TopicPartition
 import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializer}
 
 import scala.concurrent.Future
@@ -36,9 +37,11 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
     .withProperty("batch.size", "0")
 
   private val eventualMessage: ((String, String, String, CommittableOffset) => Future[Message[String, String, CommittableOffset]]) = { (topic, key, value, offset) =>
+    val partition = key.split("_")(0).toInt
+    logger.info(s"partition: $partition")
     Future(
       ProducerMessage.Message(
-        new ProducerRecord(topic, 0, key, value),
+        new ProducerRecord(topic, partition, key, value),
         offset)
     )
   }
@@ -49,14 +52,15 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
   }
 
   private val process: ((Topic, Business) => Source[Message[String, String, CommittableOffset], Consumer.Control]) = { (topic, logic) =>
+    val tps: Set[TopicPartition] = ((0 to 39) map (new TopicPartition(topic.request, _))).toSet
     Consumer
-      .committableSource(consumerSettings, Subscriptions.topics(topic.request))
+      .committableSource(consumerSettings, Subscriptions.assignment(tps))
       .mapAsync(3) { x =>
         val f = logic(x)
         f.recover {
           case e: Throwable => {
             logger.error(e.getMessage)
-            (x, "{\"count\": \"\", \"data\": [], \"state\": \"\", \"pager\": \"\", \"target\": \"banks\"}")
+            (x, "")
           }
         }
       }
@@ -69,6 +73,8 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
   override def receive: Receive = {
     case tp: TopicBusiness =>
       initStream(tp.topic, tp.business)
+    case tps: Seq[TopicBusiness] =>
+      tps foreach (tp => initStream(tp.topic, tp.business))
     case _ =>
       logger.error("Unexpected message")
       throw new Exception("Unexpected message")
