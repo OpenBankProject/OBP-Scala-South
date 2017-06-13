@@ -15,16 +15,32 @@ import io.circe.generic.auto._
 import io.circe.syntax._
 
 /**
+  * Responsible for processing requests from North Side using local json files as data sources.
+  *
   * Created by slavisa on 6/6/17.
   */
 class LocalProcessor(implicit executionContext: ExecutionContext, materializer: Materializer) extends StrictLogging with Config {
 
-  def processor: Business = { msg =>
+  /**
+    * Processes message that comes from generic 'Request'/'Response' topics.
+    * It has to resolve version from request first and based on that employ corresponding Decoder to extract response.
+    * For convenience it is done in private method.
+    *
+    * @return Future of tuple2 containing message given from client and response given from corresponding Decoder.
+    *         The form is defined in SouthKafkaStreamsActor
+    */
+  def generic: Business = { msg =>
     logger.info(s"Processing ${msg.record.value}")
     Future(msg, getResponse(msg))
   }
 
-  def getBanks: Business = { msg =>
+  /**
+    * Processes message that comes from 'GetBanks' topic
+    *
+    * @return
+    */
+  def banks: Business = { msg =>
+    /* call Decoder for extracting data from source file */
     val response: (GetBanks => Banks) = { q => com.tesobe.obp.jun2017.Decoder.getBanks(q) }
     val r = decode[GetBanks](msg.record.value()) match {
       case Left(e) => ""
