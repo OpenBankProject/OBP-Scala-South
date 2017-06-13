@@ -1,6 +1,8 @@
 package com.tesobe.obp.jun2017
 
 /**
+  * Model based on example_import_jun2017.json
+  *
   * Created by slavisa on 6/8/17.
   */
 

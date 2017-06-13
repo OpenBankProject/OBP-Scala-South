@@ -16,6 +16,9 @@ import org.apache.kafka.common.serialization.{StringDeserializer, StringSerializ
 import scala.concurrent.Future
 
 /**
+  * Responsible for talking to kafka.
+  * Receives messages from kafka and sends result of applied business logic on the same partition but on 'R' topic.
+  *
   * Created by slavisa on 6/4/17.
   */
 class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with Config with StrictLogging {
@@ -47,7 +50,7 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
   }
 
   private val eventualAuditedMessage: ((String, CommittableMessage[String, String], String) => Future[Message[String, String, CommittableOffset]]) = { (topic, msg, value) =>
-    //auditProducer.send(new ProducerRecord[Array[Byte], Array[Byte]](topic, msg.record.value(), value))
+    //auditProducer.send(new ProducerRecord[String, String](topic, msg.record.value(), value))
     eventualMessage(topic, msg.record.key(), value, msg.committableOffset)
   }
 
@@ -70,6 +73,10 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
       }
   }
 
+  /**
+    * Message contains topics and business logic that will be applied on message are defined in message.
+    *
+    */
   override def receive: Receive = {
     case tp: TopicBusiness =>
       initStream(tp.topic, tp.business)
@@ -86,7 +93,21 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
 
 }
 
-
+/**
+  * Contains all tags used in various kafka connector versions on North Side.
+  *
+  * @param name
+  * @param username
+  * @param password
+  * @param messageFormat
+  * @param action
+  * @param version
+  * @param north
+  * @param target
+  * @param userId
+  * @param bankId
+  * @param source
+  */
 case class Request(name: Option[String],
                    username: Option[String],
                    password: Option[String],
@@ -102,8 +123,18 @@ case class Request(name: Option[String],
 object SouthKafkaStreamsActor {
   type Business = CommittableMessage[String, String] => Future[(CommittableMessage[String, String], String)]
 
+  /**
+    *
+    * @param request
+    * @param response
+    */
   case class Topic(request: String, response: String)
 
+  /**
+    *
+    * @param topic defines topic (request) to which the consumer will be subscribed and topic (response) on which messages will be sent by producer
+    * @param business defines business logic that will be applied. For example LocalProcessor.generic or LocalProcessor.banks
+    */
   case class TopicBusiness(topic: Topic, business: Business)
 
   final val name = "SouthKafkaStreamsActor"

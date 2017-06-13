@@ -38,6 +38,10 @@ trait Decoder {
     (request.target.get, request.name.get)
   }
 
+  /**
+    * All subsequent case classes must be the same structure as it is defined on North Side.
+    *
+    */
   case class BankN(bankId: Option[String],
                    name: Option[String],
                    logo: Option[String],
