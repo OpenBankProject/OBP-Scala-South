@@ -3,7 +3,7 @@ package com.tesobe.obp
 import akka.actor.{ActorSystem, Props}
 import akka.stream.{ActorMaterializer, ActorMaterializerSettings, Supervision}
 import com.tesobe.obp.SouthKafkaStreamsActor.TopicBusiness
-import com.tesobe.obp.jun2017.GetBanks
+import com.tesobe.obp.jun2017.{GetBank, GetBanks}
 import com.typesafe.scalalogging.StrictLogging
 
 import scala.concurrent.Await
@@ -14,23 +14,7 @@ import scala.concurrent.duration.Duration
   *
   * Created by slavisa on 12/27/16.
   */
-object Main extends App with StrictLogging with Config {
-
-  /**
-    *
-    * @return sequence of functions which will be applied in processing of North Side messages
-    */
-  def getProcessor = {
-    processorName match {
-      case "localFile" => Seq(
-        TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic),
-        TopicBusiness(caseClassToTopic(GetBanks), LocalProcessor()(executionContext, materializer).banks)
-      )
-      case "mockedSopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic)
-      case "sopra" => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic)
-      case _ => TopicBusiness(topic, LocalProcessor()(executionContext, materializer).generic)
-    }
-  }
+object Main extends App with StrictLogging with Config with ProcessorFactory {
 
   val systemName = config.getString("system-name")
 
@@ -54,7 +38,7 @@ object Main extends App with StrictLogging with Config {
 
   actorOrchestration ! getProcessor
 
-//  import fs2.Stream
+  //  import fs2.Stream
 
   Await.ready(system.whenTerminated, Duration.Inf)
 }
