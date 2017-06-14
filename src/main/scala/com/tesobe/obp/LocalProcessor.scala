@@ -39,7 +39,7 @@ class LocalProcessor(implicit executionContext: ExecutionContext, materializer: 
     *
     * @return
     */
-  def banks: Business = { msg =>
+  def banksFn: Business = { msg =>
     /* call Decoder for extracting data from source file */
     val response: (GetBanks => Banks) = { q => com.tesobe.obp.jun2017.Decoder.getBanks(q) }
     val r = decode[GetBanks](msg.record.value()) match {
@@ -49,7 +49,7 @@ class LocalProcessor(implicit executionContext: ExecutionContext, materializer: 
     Future(msg, r)
   }
 
-  def bank: Business = { msg =>
+  def bankFn: Business = { msg =>
     /* call Decoder for extracting data from source file */
     val response: (GetBank => BankWrapper) = { q => com.tesobe.obp.jun2017.Decoder.getBank(q) }
     val r = decode[GetBank](msg.record.value()) match {

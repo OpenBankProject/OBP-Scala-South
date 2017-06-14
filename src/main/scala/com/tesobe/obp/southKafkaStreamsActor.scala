@@ -136,7 +136,7 @@ object SouthKafkaStreamsActor {
   /**
     *
     * @param topic defines topic (request) to which the consumer will be subscribed and topic (response) on which messages will be sent by producer
-    * @param business defines business logic that will be applied. For example LocalProcessor.generic or LocalProcessor.banks
+    * @param business defines business logic that will be applied. For example LocalProcessor.generic or LocalProcessor.banksFn
     */
   case class TopicBusiness(topic: Topic, business: Business)
 
