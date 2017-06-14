@@ -1,5 +1,7 @@
 package com.tesobe.obp.jun2017
 
+import com.tesobe.obp.SouthKafkaStreamsActor.Topic
+
 /**
   * Here are defined all the things that go through kafka
   *
@@ -15,21 +17,18 @@ package com.tesobe.obp.jun2017
 case class AuthInfo(userId: String, username: String)
 
 /**
-  * Payload for GetBank request topic
+  * Payloads for request topic
   *
-  * @param authInfo
-  * @param version
   */
-case class GetBanks(authInfo: AuthInfo, version: String)
+case class GetBanks(authInfo: AuthInfo, criteria: String)
+case class GetBank(authInfo: AuthInfo, bankId: String)
 
 /**
-  * Payload for GetBank response topic
+  * Payloads for response topic
   *
-  * @param authInfo
-  * @param data
   */
 case class Banks(authInfo: AuthInfo, data: List[InboundBank])
-
+case class BankWrapper(authInfo: AuthInfo, data: Option[InboundBank])
 
 /**
   * All subsequent case classes must be the same structure as it is defined on North Side

@@ -3,7 +3,6 @@ package com.tesobe.obp
 import java.util.UUID
 
 import com.tesobe.obp.SouthKafkaStreamsActor.Topic
-import com.tesobe.obp.jun2017.GetBanks
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.duration._
@@ -21,6 +20,7 @@ trait Config {
     }
   }
 
+  val kafkaPartitions = config.getInt("kafka.partitions")
   val clientId = UUID.randomUUID().toString
   val groupId = "obp-socgen" //UUID.randomUUID().toString
 
@@ -37,17 +37,9 @@ trait Config {
 
   val topic = Topic(requestTopic, responseTopic)
 
-  /**
-    * Helper for getting kafka topics from case classes.
-    *
-    * @param caseClass
-    * @return pair of strings representing kafka topics
-    * Note the form:
-    * <li> "obp" - just as an ID</li>
-    * <li> "Q" or "R" which stands from Query/Response </li>
-    * <li> case class simple name without "$" because it is invalid char for kafka topic name</li>
-    */
-  def caseClassToTopic(caseClass: Any): Topic =
-    Topic("obp.Q." + caseClass.getClass.getSimpleName.replace("$", ""),
-      "obp.R." + caseClass.getClass.getSimpleName.replace("$", ""))
+  val version = config.getString("kafka.version")
+
+  def caseClassToTopic(className: String): Topic =
+    Topic(s"obp.${version}.Q." + className.replace("$", ""),
+      s"obp.${version}.R." + className.replace("$", ""))
 }

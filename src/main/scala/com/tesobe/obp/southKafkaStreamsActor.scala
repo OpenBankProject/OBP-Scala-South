@@ -55,9 +55,8 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
   }
 
   private val process: ((Topic, Business) => Source[Message[String, String, CommittableOffset], Consumer.Control]) = { (topic, logic) =>
-    val tps: Set[TopicPartition] = ((0 to 39) map (new TopicPartition(topic.request, _))).toSet
     Consumer
-      .committableSource(consumerSettings, Subscriptions.assignment(tps))
+      .committableSource(consumerSettings, Subscriptions.assignment(buildPartitions(topic)))
       .mapAsync(3) { x =>
         val f = logic(x)
         f.recover {
@@ -68,9 +67,13 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
         }
       }
       .mapAsync(3) { pr =>
-        logger.info(topic.response + ": " + pr._2)
+        logger.info(s"Response - ${topic.response}: ${pr._2}")
         eventualAuditedMessage(topic.response, pr._1, pr._2)
       }
+  }
+
+  private def buildPartitions(topic: Topic) = {
+    ((0 to (kafkaPartitions - 1)) map (new TopicPartition(topic.request, _))).toSet
   }
 
   /**
