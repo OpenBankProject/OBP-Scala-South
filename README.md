@@ -4,4 +4,4 @@ This project is a part of [OpenBankProject](https://github.com/OpenBankProject) 
 Based on received requests and local configuration it communicates with variuos data sources (provided by banks or local files etc.)
 and returns gathered data back to North side in appropriate form. 
 
-As a messaging midleware [Kafka](http://kafka.apache.org/downloads.html) is used. 
+As a messaging middleware [Kafka](http://kafka.apache.org/downloads.html) is used. 
