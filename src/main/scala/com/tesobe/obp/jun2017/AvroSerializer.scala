@@ -9,6 +9,7 @@ import scala.util.Try
 
 /**
   * Provides generic serialization/deserialization
+  *
   */
 trait AvroSerializer {
 

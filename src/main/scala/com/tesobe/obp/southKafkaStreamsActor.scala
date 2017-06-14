@@ -19,7 +19,6 @@ import scala.concurrent.Future
   * Responsible for talking to kafka.
   * Receives messages from kafka and sends result of applied business logic on the same partition but on 'R' topic.
   *
-  * Created by slavisa on 6/4/17.
   */
 class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with Config with StrictLogging {
 
@@ -81,9 +80,9 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
     *
     */
   override def receive: Receive = {
-    case tp: TopicBusiness =>
+    case tp: BusinessTopic =>
       initStream(tp.topic, tp.business)
-    case tps: Seq[TopicBusiness] =>
+    case tps: Seq[BusinessTopic] =>
       tps foreach (tp => initStream(tp.topic, tp.business))
     case _ =>
       logger.error("Unexpected message")
@@ -134,11 +133,12 @@ object SouthKafkaStreamsActor {
   case class Topic(request: String, response: String)
 
   /**
+    * In fact tuple to overcome compiler warnings regarding type erasure.
     *
     * @param topic defines topic (request) to which the consumer will be subscribed and topic (response) on which messages will be sent by producer
     * @param business defines business logic that will be applied. For example LocalProcessor.generic or LocalProcessor.banksFn
     */
-  case class TopicBusiness(topic: Topic, business: Business)
+  case class BusinessTopic(topic: Topic, business: Business)
 
   final val name = "SouthKafkaStreamsActor"
 

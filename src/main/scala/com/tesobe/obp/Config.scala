@@ -8,7 +8,8 @@ import com.typesafe.config.ConfigFactory
 import scala.concurrent.duration._
 
 /**
-  * Created by slavisa on 12/27/16.
+  * Main configuration utility
+  *
   */
 trait Config {
 

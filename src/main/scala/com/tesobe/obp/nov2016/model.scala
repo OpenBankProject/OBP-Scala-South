@@ -3,7 +3,6 @@ package com.tesobe.obp.nov2016
 /**
   * Model based on example_import_nov2017.json
   *
-  * Created by slavisa on 6/5/17.
   */
 case class DriveUp(hours: String)
 

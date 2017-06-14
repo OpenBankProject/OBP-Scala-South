@@ -1,14 +1,13 @@
 package com.tesobe.obp.jun2017
 
-import com.tesobe.obp.{Request}
-import io.circe.parser.decode
+import com.tesobe.obp.Request
 import io.circe.generic.auto._
+import io.circe.parser.decode
 import io.circe.syntax._
 
 /**
   * Support for old style messaging.
   *
-  * Created by slavisa on 6/11/17.
   */
 trait MappedDecoder {
 

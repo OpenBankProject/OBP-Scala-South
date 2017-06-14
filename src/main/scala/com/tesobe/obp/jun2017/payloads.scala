@@ -1,11 +1,9 @@
 package com.tesobe.obp.jun2017
 
-import com.tesobe.obp.SouthKafkaStreamsActor.Topic
 
 /**
   * Here are defined all the things that go through kafka
   *
-  * Created by slavisa on 6/5/17.
   */
 
 /**

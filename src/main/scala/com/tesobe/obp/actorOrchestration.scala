@@ -7,7 +7,6 @@ import com.typesafe.scalalogging.StrictLogging
 /**
   * Main manager for all actors. Currently creates SouthKafkaStreamsActor only.
   *
-  * Created by slavisa on 6/4/17.
   */
 class ActorOrchestration(implicit val materializer: ActorMaterializer) extends Actor with StrictLogging {
 

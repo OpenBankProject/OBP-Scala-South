@@ -9,7 +9,6 @@ import io.circe.syntax._
 /**
   * Responsible for processing requests based on local example_import_mar2017.json file.
   *
-  * Created by slavisa on 6/8/17.
   */
 trait Decoder {
 
