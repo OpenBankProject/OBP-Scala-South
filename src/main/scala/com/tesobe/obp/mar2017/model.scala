@@ -3,7 +3,6 @@ package com.tesobe.obp.mar2017
 /**
   * Model based on example_import_mar2017.json
   *
-  * Created by slavisa on 6/8/17.
   */
 
 case class DriveUp(

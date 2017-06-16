@@ -7,7 +7,6 @@ import io.circe.parser.decode
 /**
   * Responsible for processing requests based on local example_import_jun2017.json file.
   *
-  * Created by slavisa on 6/8/17.
   */
 trait Decoder extends MappedDecoder {
 

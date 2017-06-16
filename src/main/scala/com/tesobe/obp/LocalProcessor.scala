@@ -5,9 +5,6 @@ import akka.stream.Materializer
 import com.tesobe.obp.SouthKafkaStreamsActor.Business
 import com.tesobe.obp.jun2017._
 import com.typesafe.scalalogging.StrictLogging
-import io.circe.Error
-import io.circe.generic.auto._
-import io.circe.parser._
 
 import scala.concurrent.{ExecutionContext, Future}
 import io.circe.parser.decode
@@ -17,7 +14,6 @@ import io.circe.syntax._
 /**
   * Responsible for processing requests from North Side using local json files as data sources.
   *
-  * Created by slavisa on 6/6/17.
   */
 class LocalProcessor(implicit executionContext: ExecutionContext, materializer: Materializer) extends StrictLogging with Config {
 

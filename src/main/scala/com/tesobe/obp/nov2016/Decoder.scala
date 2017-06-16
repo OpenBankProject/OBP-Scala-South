@@ -1,13 +1,13 @@
 package com.tesobe.obp.nov2016
 
 import com.tesobe.obp.Request
-import io.circe.Error
 import io.circe.generic.auto._
 import io.circe.parser.decode
 import io.circe.syntax._
 
 /**
-  * Created by slavisa on 6/8/17.
+  * Worker trait for gathering data from local file and serializing it
+  *
   */
 trait Decoder {
 
