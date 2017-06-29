@@ -39,7 +39,7 @@ trait MappedDecoder {
             }
           case _ =>
             Map("data" -> "Error, unrecognised request").asJson.noSpaces
-        }
+      }
     }
   }
 
