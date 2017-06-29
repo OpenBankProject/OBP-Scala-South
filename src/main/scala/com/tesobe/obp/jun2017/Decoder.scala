@@ -29,6 +29,10 @@ trait Decoder extends MappedDecoder {
 
     }
   }
+  
+  def getAccounts(request: GetAccounts) = {
+    
+  }
 
 
   /*

@@ -54,6 +54,11 @@ class LocalProcessor(implicit executionContext: ExecutionContext, materializer: 
     }
     Future(msg, r)
   }
+  
+  def accountsFn: Business = { msg =>
+    val response: (GetAccounts => AccountsWrapper) ={ q => com.tesobe.obp.jun2017.Decoder.getAccounts(q)}
+    
+  }
 
 
   private def getResponse(msg: CommittableMessage[String, String]): String = {
