@@ -1,4 +1,4 @@
-name := "OBP-Scala-South"
+name := "OBP-Adapter_Leumi"
 
 version := "1.0"
 
@@ -23,6 +23,7 @@ libraryDependencies ++= {
   val logbackVersion = "1.1.3"
   val scalaLoggingVersion = "3.5.0"
   val circeVersion = "0.7.0"
+  val kamonVersion = "0.6.6"
 
   Seq(
     "com.typesafe.akka"                   %% "akka-slf4j"             % akkaV,
@@ -37,9 +38,12 @@ libraryDependencies ++= {
     "de.knutwalker"                       %% "akka-stream-json"           % "3.3.0",
     "de.knutwalker"                       %% "akka-http-json"             % "3.3.0",
     "org.apache.camel"                     % "camel-stream"               % "2.19.0",
-  "co.fs2" %% "fs2-core" % "0.9.6",
-  "co.fs2" %% "fs2-io" % "0.9.6",
-  "com.typesafe.scala-logging"           % "scala-logging_2.12"         % scalaLoggingVersion
+    "org.scalatest"                       %% "scalatest"                  % "3.0.1",
+    "net.liftweb"                         %% "lift-json"                  % "3.1.0-M3",
+    "net.liftweb"                         %% "lift-util"                  % "3.1.0-M3", 
+    "co.fs2" %% "fs2-core" % "0.9.6",
+    "co.fs2" %% "fs2-io" % "0.9.6",
+    "com.typesafe.scala-logging"           % "scala-logging_2.12"         % scalaLoggingVersion
   )
 }
 

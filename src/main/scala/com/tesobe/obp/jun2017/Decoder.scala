@@ -12,9 +12,11 @@ import io.circe.parser.decode
 trait Decoder extends MappedDecoder {
 
   def getBanks(request: GetBanks) = {
+    println("Enter getBanks")
     decodeLocalFile match {
       case Left(_) => Banks(request.authInfo, List.empty[InboundBank])
-      case Right(x) => Banks(request.authInfo, x.banks.map(mapBankN))
+      case Right(x)  => Banks(request.authInfo, List(InboundBank("Bank","Bank","Bank","Bank","Bank")))
+      //case Right(x) => Banks(request.authInfo, x.banks.map(mapBankN))
     }
   }
 
@@ -32,7 +34,9 @@ trait Decoder extends MappedDecoder {
   }
   
   def getAccounts(request: GetAccounts) = {
-    
+      println("Enter getAccounts")
+       AccountsWrapper(request.authInfo,List(InboundAccountJune2017("hitest","hitest","hitest","hitest","hitest","hitest",
+      "hitest","hitest",List("hitest"),List("hitest"),"hitest","hitest","hitest","hitest","hitest","hitest")))
   }
 
   def getAdapter(request: GetAdapterInfo) = {
