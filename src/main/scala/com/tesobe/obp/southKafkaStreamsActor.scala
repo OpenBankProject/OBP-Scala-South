@@ -72,6 +72,7 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
   }
 
   private def buildPartitions(topic: Topic) = {
+    println(kafkaPartitions.toString)
     ((0 to (kafkaPartitions - 1)) map (new TopicPartition(topic.request, _))).toSet
   }
 

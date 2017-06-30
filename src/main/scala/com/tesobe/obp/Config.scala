@@ -41,6 +41,6 @@ trait Config {
   val version = config.getString("kafka.version")
 
   def caseClassToTopic(className: String): Topic =
-    Topic(s"obp.${version}.Q." + className.replace("$", ""),
-      s"obp.${version}.R." + className.replace("$", ""))
+    Topic(s"obp.${version}.N." + className.replace("$", ""),
+      s"obp.${version}.S." + className.replace("$", ""))
 }
