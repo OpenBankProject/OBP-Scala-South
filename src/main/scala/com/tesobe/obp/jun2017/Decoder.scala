@@ -1,5 +1,7 @@
 package com.tesobe.obp.jun2017
 
+import java.util.Date
+
 import com.tesobe.obp.Util
 import io.circe.generic.auto._
 import io.circe.parser.decode
@@ -32,7 +34,7 @@ trait Decoder extends MappedDecoder {
   }
 
   def getAdapter(request: GetAdapterInfo) = {
-    AdapterInfo(data = Some(InboundAdapterInfo("", "OBP-Scala-South", "June2017", Util.gitCommit, System.currentTimeMillis().toString)))
+    AdapterInfo(data = Some(InboundAdapterInfo("", "OBP-Scala-South", "June2017", Util.gitCommit, (new Date()).toString)))
   }
 
 
