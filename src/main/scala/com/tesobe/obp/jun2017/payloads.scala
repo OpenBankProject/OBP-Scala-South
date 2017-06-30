@@ -20,6 +20,7 @@ case class AuthInfo(userId: String, username: String)
   */
 case class GetBanks(authInfo: AuthInfo, criteria: String)
 case class GetBank(authInfo: AuthInfo, bankId: String)
+case class GetAdapterInfo(currentTimeInMillis: String)
 case class GetAccounts(authInfo: AuthInfo, bankId: String, accountId: String)
 
 /**
@@ -29,6 +30,7 @@ case class GetAccounts(authInfo: AuthInfo, bankId: String, accountId: String)
 case class Banks(authInfo: AuthInfo, data: List[InboundBank])
 case class BankWrapper(authInfo: AuthInfo, data: Option[InboundBank])
 case class AccountsWrapper(authinfo: AuthInfo, data: List[InboundAccount])
+case class AdapterInfo(data: Option[InboundAdapterInfo])
 
 /**
   * All subsequent case classes must be the same structure as it is defined on North Side
@@ -63,3 +65,10 @@ case class InboundAccount(
                           generateAuditorsView: String
                           )
 
+
+case class InboundAdapterInfo(errorCode: String,
+                              name: String,
+                              version: String,
+                              git_commit: String,
+                              currentTimeInMillis: String
+                             )

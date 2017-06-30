@@ -1,5 +1,6 @@
 package com.tesobe.obp.jun2017
 
+import com.tesobe.obp.Util
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
@@ -32,6 +33,10 @@ trait Decoder extends MappedDecoder {
   
   def getAccounts(request: GetAccounts) = {
     
+  }
+
+  def getAdapter(request: GetAdapterInfo) = {
+    AdapterInfo(data = Some(InboundAdapterInfo("", "OBP-Scala-South", "June2017", Util.gitCommit, System.currentTimeMillis().toString)))
   }
 
 
