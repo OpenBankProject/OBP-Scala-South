@@ -2,7 +2,7 @@ package com.tesobe.obp
 
 import java.util.UUID
 
-import com.tesobe.obp.SouthKafkaStreamsActor.Topic
+import com.tesobe.obp.SouthKafkaStreamsActor.TopicPair
 import com.typesafe.config.ConfigFactory
 
 import scala.concurrent.duration._
@@ -36,11 +36,18 @@ trait Config {
   val responseTopic = config.getString("kafka.request.topic.response")
 
 
-  val topic = Topic(requestTopic, responseTopic)
+  val topic = TopicPair(requestTopic, responseTopic)
 
   val version = config.getString("kafka.version")
 
-  def caseClassToTopic(className: String): Topic =
-    Topic(s"obp.${version}.N." + className.replace("$", ""),
-      s"obp.${version}.S." + className.replace("$", ""))
+  def createTopicByClassName(className: String): TopicPair =
+  /**
+    *  eg: 
+    *  obp.Jun2017.N.GetBank
+    *  obp.Jun2017.S.GetBank
+    */
+    TopicPair(
+      s"obp.${version}.N." + className.replace("$", ""),
+      s"obp.${version}.S." + className.replace("$", "")
+    )
 }
