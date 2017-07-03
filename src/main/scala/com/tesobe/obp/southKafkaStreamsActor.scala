@@ -17,7 +17,7 @@ import scala.concurrent.Future
 
 /**
   * Responsible for talking to kafka.
-  * Receives messages from kafka and sends result of applied business logic on the same partition but on 'R' topic.
+  * Receives messages from kafka and sends result of applied business logic on the same partition but on 'Response' topic.
   *
   */
 class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) extends Actor with Config with StrictLogging {
@@ -38,41 +38,64 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
     .withBootstrapServers(bootstrapServers)
     .withProperty("batch.size", "0")
 
+  // Here will send the message to kafka broker:
+  // (topic, key, value, offset) --> ProducerMessage.Message(new ProducerRecord(topic, partition, key, value),offset)
   private val eventualMessage: ((String, String, String, CommittableOffset) => Future[Message[String, String, CommittableOffset]]) = { (topic, key, value, offset) =>
-    val partition = key.split("_")(0).toInt
-    logger.info(s"partition: $partition")
+    // key is from North Side and With the same key, partition and share the same TopicPair to send the message back . 
+    val partition = key.split("_")(0).toInt 
+    logger.debug(s"partition: $partition")
     Future(
       ProducerMessage.Message(
         new ProducerRecord(topic, partition, key, value),
         offset)
     )
   }
-
+  // extract (topic, msg, value) --> (topic, msg.record.key(), value, msg.committableOffset)
+  // Do not use the auditProducer for now ?? only call the eventualMessage ? 
   private val eventualAuditedMessage: ((String, CommittableMessage[String, String], String) => Future[Message[String, String, CommittableOffset]]) = { (topic, msg, value) =>
     //auditProducer.send(new ProducerRecord[String, String](topic, msg.record.value(), value))
     eventualMessage(topic, msg.record.key(), value, msg.committableOffset)
   }
 
-  private val process: ((Topic, Business) => Source[Message[String, String, CommittableOffset], Consumer.Control]) = { (topic, logic) =>
+  //Communication with Kafka, 
+  // 1 Consumer read the data from Kafka
+  // 2 call the business logic to process the input message
+  // 3 send back the message to kafka.
+  // Note: Here South-side shares the same key, partition and TopicParis with North-side. 
+  //       So the North-side know exactly how to communicate with it.
+  private val process: ((TopicPair, Business) => Source[Message[String, String, CommittableOffset], Consumer.Control]) = { (topicPair, business) =>
+    val topicRequest = topicPair.request
+    val topicResponse = topicPair.response
+    val topicAndItsPartitions = buildAllPartitionsForOneTopic(topicRequest)
     Consumer
-      .committableSource(consumerSettings, Subscriptions.assignment(buildPartitions(topic)))
-      .mapAsync(3) { x =>
-        val f = logic(x)
-        f.recover {
+      .committableSource(
+        consumerSettings, 
+        Subscriptions.assignment(topicAndItsPartitions)//The consumer need subscribe all the partitions for one topic
+      )
+      .mapAsync(3) { consumerMessage =>
+        val future = business(consumerMessage)
+        future.recover {
           case e: Throwable => {
             logger.error(e.getMessage)
-            (x, "")
+            (consumerMessage, "")
           }
         }
       }
-      .mapAsync(3) { pr =>
-        logger.info(s"Response - ${topic.response}: ${pr._2}")
-        eventualAuditedMessage(topic.response, pr._1, pr._2)
+      .mapAsync(3) { consumerMessageBusiness =>
+        logger.debug(s"Response - ${topicResponse}: ${consumerMessageBusiness._2}")
+        eventualAuditedMessage(topicResponse, consumerMessageBusiness._1, consumerMessageBusiness._2)
       }
   }
-
-  private def buildPartitions(topic: Topic) = {
-    ((0 to (kafkaPartitions - 1)) map (new TopicPartition(topic.request, _))).toSet
+  
+  
+  
+  /**
+    * Create the partition list according to the input requestTopic and kafkaPartitions(from props application.conf)
+    * @param requestTopic the requestTopic is create from North Side, in South side, only Consumer the topic
+    * @return a set contains all the partitions from the input requestTopic
+    */
+  private def buildAllPartitionsForOneTopic(requestTopic: String): Set[TopicPartition] = {
+    ((0 to (kafkaPartitions - 1)) map (new TopicPartition(requestTopic, _))).toSet
   }
 
   /**
@@ -81,15 +104,15 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
     */
   override def receive: Receive = {
     case tp: BusinessTopic =>
-      initStream(tp.topic, tp.business)
+      initStream(tp.topicPair, tp.business)
     case tps: Seq[BusinessTopic] =>
-      tps foreach (tp => initStream(tp.topic, tp.business))
+      tps foreach (tp => initStream(tp.topicPair, tp.business))
     case _ =>
       logger.error("Unexpected message")
       throw new Exception("Unexpected message")
   }
 
-  private def initStream(tp: (Topic, Business)) = {
+  private def initStream(tp: (TopicPair, Business)) = {
     process(tp._1, tp._2).runWith(Producer.commitableSink(producerSettings))
   }
 
@@ -123,22 +146,31 @@ case class Request(name: Option[String],
                    source: Option[String])
 
 object SouthKafkaStreamsActor {
+  
+  /**
+    * This is a function, input is KafkaConsumerMessage, output is Future(KafkaConsumerMessage, KafkaProducerMessage.value)
+    * Eg: com.tesobe.obp.LocalProcessor#banksFn()
+    *   banksFn() is a partition function: 
+    *    1 Process the inputMessage and get the result.
+    *    2 Return the inputMessage and result in Future
+    */
   type Business = CommittableMessage[String, String] => Future[(CommittableMessage[String, String], String)]
 
   /**
-    *
-    * @param request
-    * @param response
+    * This case class design a pair of Topic, for both North and South side.
+    * They are a pair
+    * @param request  eg: obp.Jun2017.N.GetBanks
+    * @param response eg: obp.Jun2017.S.GetBanks
     */
-  case class Topic(request: String, response: String)
+  case class TopicPair(request: String, response: String)
 
   /**
     * In fact tuple to overcome compiler warnings regarding type erasure.
     *
-    * @param topic defines topic (request) to which the consumer will be subscribed and topic (response) on which messages will be sent by producer
-    * @param business defines business logic that will be applied. For example LocalProcessor.generic or LocalProcessor.banksFn
+    * @param topicPair defines topic (request) to which the consumer will be subscribed and topic (response) on which messages will be sent by producer
+    * @param business defines business logic that will be applied. For example LocalProcessor.bankFn or LocalProcessor.banksFn
     */
-  case class BusinessTopic(topic: Topic, business: Business)
+  case class BusinessTopic(topicPair: TopicPair, business: Business)
 
   final val name = "SouthKafkaStreamsActor"
 
