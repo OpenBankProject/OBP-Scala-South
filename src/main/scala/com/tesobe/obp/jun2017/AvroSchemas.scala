@@ -1,4 +1,4 @@
-package com.tesobe.obp.jun2017
+package com.tesobe.obp.june2017
 
 import com.sksamuel.avro4s.SchemaFor
 
@@ -12,5 +12,5 @@ import com.sksamuel.avro4s.SchemaFor
 object AvroSchemas {
   implicit val schemaForGetBanks = SchemaFor[GetBanks]
   implicit val schemaForBanks = SchemaFor[Banks]
-
 }
+

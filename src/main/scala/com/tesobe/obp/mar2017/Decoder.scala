@@ -24,8 +24,7 @@ trait Decoder {
       case Right(example) =>
         extractQuery(request) match {
           case Some("obp.get.Bank") =>
-            val bankId = if (request.bankId == Some("1")) Some("obp-bank-x-gh") else if (request.bankId == Some("2")) Some("obp-bank-y-gh") else None
-            example.banks.filter(_.id == bankId).headOption match {
+            example.banks.filter(_.id == Some(request.bankId)).headOption match {
               case Some(x) => Map("data" -> mapBankN(x)).asJson.noSpaces
               case None => Map("data" -> BankN(Some(BankNotFound), None, None, None, None)).asJson.noSpaces
             }

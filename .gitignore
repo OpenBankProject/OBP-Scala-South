@@ -3,9 +3,11 @@
 /*/build
 /build
 target/
-.idea
+.idea/
 */target
 /.gradle
 /rethinkdb_data/
 /.ensime
 /.ensime_cache.d/
+out/
+src/main/resources/git.properties

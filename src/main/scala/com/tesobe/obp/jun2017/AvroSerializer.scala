@@ -1,4 +1,4 @@
-package com.tesobe.obp.jun2017
+package com.tesobe.obp.june2017
 
 import java.io.{ByteArrayOutputStream, InputStream}
 

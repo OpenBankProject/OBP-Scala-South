@@ -13908,6 +13908,13 @@
       "fullName": "The Bank of Y",
       "shortName": "Bank Y",
       "id": "obp-bank-y-gh"
+    },
+    {
+      "website": "https://www.leumi.com",
+      "logo": "https://static.openbankproject.com/images/sandbox/bank_leumi.png",
+      "fullName": "The Bank of Leumi",
+      "shortName": "Leumi",
+      "id": "10"
     }
   ],
   "products": [
