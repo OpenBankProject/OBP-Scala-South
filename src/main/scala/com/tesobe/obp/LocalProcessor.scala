@@ -42,7 +42,18 @@ class LocalProcessor(implicit executionContext: ExecutionContext, materializer: 
     logger.info(s"Processing ${msg.record.value}")
     Future(msg, getResponse(msg))
   }
-
+  
+  def adapterFn: Business = { msg =>
+    logger.debug(s"Processing adapterFn ${msg.record.value}")
+    /* call Decoder for extracting data from source file */
+    val response: (GetAdapterInfo => AdapterInfo) = { q => com.tesobe.obp.june2017.Decoder.getAdapter(q) }
+    val r = decode[GetAdapterInfo](msg.record.value()) match {
+      case Left(e) => throw new RuntimeException(" !!! --- This can not be empty, please compare the case class for both sides, only for debugging ");
+      case Right(x) => response(x).asJson.noSpaces
+    }
+    Future(msg, r)
+  }
+  
   /**
     * Processes message that comes from 'GetBanks' topic
     *
@@ -92,16 +103,18 @@ class LocalProcessor(implicit executionContext: ExecutionContext, materializer: 
     Future(msg, r)
   }
   
-  def adapterFn: Business = { msg =>
-    logger.debug(s"Processing adapterFn ${msg.record.value}")
-    /* call Decoder for extracting data from source file */
-    val response: (GetAdapterInfo => AdapterInfo) = { q => com.tesobe.obp.june2017.Decoder.getAdapter(q) }
-    val r = decode[GetAdapterInfo](msg.record.value()) match {
+  def bankAccountsFn: Business = {msg =>
+    logger.debug(s"Processing bankAccountsFn ${msg.record.value}")
+    //    /* call Decoder for extracting data from source file */
+    val response: (OutboundGetAccounts => InboundBankAccounts) = { q => com.tesobe.obp.june2017.Decoder.getBankAccounts(q) }
+    val r = decode[OutboundGetAccounts](msg.record.value()) match {
       case Left(e) => throw new RuntimeException(" !!! --- This can not be empty, please compare the case class for both sides, only for debugging ");
       case Right(x) => response(x).asJson.noSpaces
     }
     Future(msg, r)
   }
+  
+  
   
   
   private def getResponse(msg: CommittableMessage[String, String]): String = {

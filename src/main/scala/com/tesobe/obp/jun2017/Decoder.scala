@@ -7,6 +7,8 @@ import io.circe.Error
 import io.circe.generic.auto._
 import io.circe.parser.decode
 
+import scala.collection.mutable.ListBuffer
+
 
 /**
   * Responsible for processing requests based on local example_import_june2017.json file.
@@ -26,7 +28,11 @@ import io.circe.parser.decode
   * This software may also be distributed under a commercial license from TESOBE Ltd subject to separate terms.
   */
 trait Decoder extends MappedDecoder with Config{
-
+  
+  def getAdapter(getAdapterInfo: GetAdapterInfo) = {
+    AdapterInfo(data = Some(InboundAdapterInfo("", "OBP-Scala-South", "June2017", Util.gitCommit, (new Date()).toString)))
+  }
+  
   def getBanks(getBanks: GetBanks) = {
     decodeLocalFile match {
       case Left(_) => Banks(getBanks.authInfo, List.empty[InboundBank])
@@ -70,8 +76,33 @@ trait Decoder extends MappedDecoder with Config{
     }
   }
   
-  def getAdapter(getAdapterInfo: GetAdapterInfo) = {
-    AdapterInfo(data = Some(InboundAdapterInfo("", "OBP-Scala-South", "June2017", Util.gitCommit, (new Date()).toString)))
+  def getBankAccounts(getAccountsInput: OutboundGetAccounts): InboundBankAccounts = {
+    InboundBankAccounts(
+      AuthInfo(
+        getAccountsInput.authInfo.userId,
+        getAccountsInput.authInfo.username,
+        cbsToken="123"
+      ),
+      List(InboundAccountJune2017(
+        errorCode = "",
+        cbsToken="123",
+        bankId = "10",
+        branchId = "10",
+        accountId = "123",
+        accountNumber = "123",
+        accountType = "123",
+        balanceAmount = "231",
+        balanceCurrency = "EUR",
+        owners = List(""),
+        viewsToGenerate = List("Owner"),
+        bankRoutingScheme = "",
+        bankRoutingAddress = "",
+        branchRoutingScheme = "",
+        branchRoutingAddress = "",
+        accountRoutingScheme = "",
+        accountRoutingAddress = "")
+      )
+    )
   }
 
   /*
