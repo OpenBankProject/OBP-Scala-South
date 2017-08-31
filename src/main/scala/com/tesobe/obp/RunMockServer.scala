@@ -22,7 +22,7 @@ object RunMockServer{
         request()
           .withMethod("POST")
           //.withHeader("Content-Type","application/json;charset=utf-8")
-          .withPath("/1")
+          .withPath("/banks")
           //.withBody("body")
       )
       .respond(
@@ -31,7 +31,7 @@ object RunMockServer{
           .withHeaders(
             new Header("Content-Type", "application/json; charset=utf-8")
           )
-          .withBody(jsonToString("example_import_Nov2016.json"))
+          .withBody(jsonToString("mockedResponse/banks.json"))
       )
     //2 
     mockServer
@@ -39,7 +39,7 @@ object RunMockServer{
         request()
           .withMethod("POST")
           //.withHeader("Content-Type","application/json;charset=utf-8")
-          .withPath("/1")
+          .withPath("/accounts")
         //.withBody("body")
       )
       .respond(
@@ -48,7 +48,7 @@ object RunMockServer{
           .withHeaders(
             new Header("Content-Type", "application/json; charset=utf-8")
           )
-          .withBody(jsonToString("example_import_Nov2016.json"))
+          .withBody(jsonToString("mockedResponse/accounts.json"))
       )
   }
 }

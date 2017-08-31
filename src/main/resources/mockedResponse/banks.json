@@ -1,0 +1,18 @@
+{
+  "banks": [
+    {
+      "website": "https://www.example.com",
+      "logo": "https://static.openbankproject.com/images/sandbox/bank_x.png",
+      "short_name": "Bank X",
+      "id": "obp-bank-x-gh",
+      "full_name": "The Bank of X"
+    },
+    {
+      "website": "https://www.example.com",
+      "logo": "https://static.openbankproject.com/images/sandbox/bank_y.png",
+      "short_name": "Bank Y",
+      "id": "obp-bank-y-gh",
+      "full_name": "The Bank of Y"
+    }
+  ]
+}
