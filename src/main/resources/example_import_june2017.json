@@ -13910,10 +13910,10 @@
       "id": "obp-bank-y-gh"
     },
     {
-      "website": "https://www.bankxy.com",
-      "logo": "https://static.openbankproject.com/images/sandbox/bank_bankxy.png",
-      "fullName": "The Bank of Scala South",
-      "shortName": "Scala South",
+      "website": "https://www.example.com",
+      "logo": "https://static.openbankproject.com/images/sandbox/example.png",
+      "fullName": "The Bank of 10",
+      "shortName": "10",
       "id": "10"
     }
   ],
