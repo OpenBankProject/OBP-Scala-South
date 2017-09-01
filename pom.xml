@@ -2,11 +2,11 @@
 <project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tesobe</groupId>
-    <artifactId>OBP-Adapter_Leumi</artifactId>
+    <artifactId>OBP-Adapter_Scala South</artifactId>
     <packaging>jar</packaging>
-    <description>OBP-Adapter_Leumi</description>
+    <description>OBP-Adapter_Scala South</description>
     <version>1.0</version>
-    <name>OBP-Adapter_Leumi</name>
+    <name>OBP-Adapter_Scala South</name>
     <organization>
         <name>com.tesobe</name>
     </organization>

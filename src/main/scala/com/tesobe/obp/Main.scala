@@ -11,7 +11,7 @@ import scala.concurrent.duration.Duration
 /**
   * Initialize actor system and as final step sends message to ActorOrchestration to initialize all actors that will be used.
   *
-  * Open Bank Project - Leumi Adapter
+  * Open Bank Project - Scala South Adapter
   * Copyright (C) 2016-2017, TESOBE Ltd.This program is free software: you can redistribute it and/or modify
   * it under the terms of the GNU Affero General Public License as published by
   * the Free Software Foundation, either version 3 of the License, or
@@ -33,7 +33,6 @@ object Main extends App with StrictLogging with Config with ProcessorFactory {
   if (config.getBoolean("mockserver.run")) {
     RunMockServer.startMockServer
   }
-  val whatever: String = "fred"
   /**
     * Reaction on unexpected events
     */

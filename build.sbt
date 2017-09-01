@@ -1,4 +1,4 @@
-name := "OBP-Adapter_Leumi"
+name := "OBP-Adapter_Scala_South"
 
 version := "1.0"
 
