@@ -8,7 +8,7 @@ import io.circe.syntax._
 /**
   * Support for old style messaging.
   *
-  * Open Bank Project - Leumi Adapter
+  * Open Bank Project - Scala South Adapter
   * Copyright (C) 2016-2017, TESOBE Ltd.This program is free software: you can redistribute it and/or modify
   * it under the terms of the GNU Affero General Public License as published by
   * the Free Software Foundation, either version 3 of the License, or
