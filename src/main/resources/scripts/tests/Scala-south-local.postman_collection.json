@@ -1,0 +1,115 @@
+{
+	"variables": [],
+	"info": {
+		"name": "Scala-south-local",
+		"_postman_id": "039399d5-1b19-b9ba-f914-7604bc02324f",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "getRoot",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"version\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://127.0.0.1:8080/obp/v3.0.0/root",
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"description": "get the OBP token\n\n case Req(\"my\" :: \"logins\" :: \"direct\" :: Nil,_ , PostRequest|GetRequest) => {"
+			},
+			"response": []
+		},
+		{
+			"name": "getAdapter",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"errorCode\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://127.0.0.1:8080/obp/v3.0.0/banks/10/adapter",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "Get the bank specified by BANK_ID Returns information about a single bank specified by BANK_ID including:\n\nShort and full name of bank\nLogo URL\nWebsite\n\nfrom kafka\n{\n  \"banks\": [\n    {\n      \"id\": \"obp-bank-x-gh\",\n      \"short_name\": \"The Bank of X\",\n      \"full_name\": \"The Bank of X\",\n      \"logo\": \"https://static.openbankproject.com/images/sandbox/bank_x.png\",\n      \"website\": \"https://www.example.com\"\n    },\n    {\n      \"id\": \"obp-bank-y-gh\",\n      \"short_name\": \"The Bank of Y\",\n      \"full_name\": \"The Bank of Y\",\n      \"logo\": \"https://static.openbankproject.com/images/sandbox/bank_y.png\",\n      \"website\": \"https://www.example.com\"\n    }\n  ]\n}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Banks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"id\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://127.0.0.1:8080/obp/v3.0.0/banks",
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "GatewayLogin token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InNpbW9uMiIsIkNCU19hdXRoX3Rva2VuIjoiXCI8TS8gICAgICAgICAgODE0MzMwMjAxMDI2MTJcIiIsInRpbWVzdGFtcCI6InRpbWVzdGFtcCIsImNvbnN1bWVyX2lkIjoiMTIzIiwiY29uc3VtZXJfbmFtZSI6Ik5hbWUgb2YgQ29uc3VtZXIifQ.6WttVheIUeEsNe4aSSMRWAXudvNNvIAFd8hcKnJw0mc",
+						"description": ""
+					}
+				],
+				"body": {},
+				"description": "Get the bank specified by BANK_ID Returns information about a single bank specified by BANK_ID including:\n\nShort and full name of bank\nLogo URL\nWebsite\n\nfrom kafka\n{\n  \"banks\": [\n    {\n      \"id\": \"obp-bank-x-gh\",\n      \"short_name\": \"The Bank of X\",\n      \"full_name\": \"The Bank of X\",\n      \"logo\": \"https://static.openbankproject.com/images/sandbox/bank_x.png\",\n      \"website\": \"https://www.example.com\"\n    },\n    {\n      \"id\": \"obp-bank-y-gh\",\n      \"short_name\": \"The Bank of Y\",\n      \"full_name\": \"The Bank of Y\",\n      \"logo\": \"https://static.openbankproject.com/images/sandbox/bank_y.png\",\n      \"website\": \"https://www.example.com\"\n    }\n  ]\n}"
+			},
+			"response": []
+		},
+		{
+			"name": "Get Bank",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							"tests[\"Response time is less than 200ms\"] = responseTime < 200;",
+							"tests[\"Body matches string\"] = responseBody.has(\"id\");"
+						]
+					}
+				}
+			],
+			"request": {
+				"url": "http://127.0.0.1:8080/obp/v3.0.0/banks/10",
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"description": "Get the bank specified by BANK_ID Returns information about a single bank specified by BANK_ID including:\n\nShort and full name of bank\nLogo URL\nWebsite\n\nfrom kafka\n{\n  \"banks\": [\n    {\n      \"id\": \"obp-bank-x-gh\",\n      \"short_name\": \"The Bank of X\",\n      \"full_name\": \"The Bank of X\",\n      \"logo\": \"https://static.openbankproject.com/images/sandbox/bank_x.png\",\n      \"website\": \"https://www.example.com\"\n    },\n    {\n      \"id\": \"obp-bank-y-gh\",\n      \"short_name\": \"The Bank of Y\",\n      \"full_name\": \"The Bank of Y\",\n      \"logo\": \"https://static.openbankproject.com/images/sandbox/bank_y.png\",\n      \"website\": \"https://www.example.com\"\n    }\n  ]\n}"
+			},
+			"response": []
+		}
+	]
+}
