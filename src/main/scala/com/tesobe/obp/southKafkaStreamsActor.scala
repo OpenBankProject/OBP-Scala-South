@@ -91,7 +91,7 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
         future.recover {
           case e: Throwable => {
             logger.error(e.getMessage)
-            (consumerMessage, "")
+            (consumerMessage, e.getMessage)
           }
         }
       }
@@ -99,8 +99,6 @@ class SouthKafkaStreamsActor(implicit val materializer: ActorMaterializer) exten
         if(consumerMessageBusiness._2 ==""){
           val errorMessage = s"Kafka-send-message :topicResponse(${topicResponse }): is empty, please compare your case class fields for both sides !"
           logger.error(errorMessage)
-          //For Debug, when it is stable, just uncomment this Exception
-          throw new RuntimeException(errorMessage)
         }
         else
           logger.debug(s"Kafka-send-message : ${topicResponse}: ${consumerMessageBusiness._2}")

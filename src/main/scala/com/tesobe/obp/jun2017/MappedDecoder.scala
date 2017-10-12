@@ -38,7 +38,7 @@ trait MappedDecoder {
           case Some("obp.get.Bank") =>
             example.banks.filter(_.id == Some(request.bankId)).headOption match {
               case Some(x) => Map("data" -> mapBankToInboundBank(x)).asJson.noSpaces
-              case None => Map("data" -> InboundBank(BankNotFound, "", "", "", "")).asJson.noSpaces
+              case None => Map("data" -> InboundBank(BankNotFound, List(InboundStatusMessage("ESB", "Success", "0", "OK")), "", "", "", "")).asJson.noSpaces
             }
           case Some("obp.get.Banks") =>
             val data = example.banks.map(mapBankToInboundBank)
@@ -56,7 +56,7 @@ trait MappedDecoder {
   }
 
   def mapBankToInboundBank(x: Bank) = {
-    InboundBank("", x.id.getOrElse(""), x.fullName.getOrElse(""), x.logo.getOrElse(""), x.website.getOrElse(""))
+    InboundBank("", List(InboundStatusMessage("ESB", "Success", "0", "OK")),x.id.getOrElse(""), x.fullName.getOrElse(""), x.logo.getOrElse(""), x.website.getOrElse(""))
   }
 
   def mapUserToInboundValidatedUser(x: User) = {

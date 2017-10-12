@@ -30,7 +30,7 @@ sealed trait TopicCaseClass
   * Payloads for request topic
   *
   */
-case class GetBanks(authInfo: AuthInfo, criteria: String) extends TopicCaseClass
+case class GetBanks(authInfo: AuthInfo) extends TopicCaseClass
 case class GetBank(authInfo: AuthInfo, bankId: String) extends TopicCaseClass
 case class GetAdapterInfo(date: String) extends TopicCaseClass
 case class OutboundGetAccounts(authInfo: AuthInfo, customers:InternalCustomers)  extends TopicCaseClass
@@ -99,8 +99,17 @@ case class InboundCreateChallengeJune2017(authInfo: AuthInfo, data: InternalCrea
   */
 case class AuthInfo(userId: String, username: String, cbsToken: String)
 
+
+case class InboundStatusMessage(
+  source: String,
+  status: String,
+  errorCode: String,
+  text: String
+)
+
 case class InboundBank(
   errorCode: String,
+  backendMessages: List[InboundStatusMessage],
   bankId: String,
   name: String,
   logo: String,

@@ -5,11 +5,14 @@ import akka.stream.Materializer
 import com.tesobe.obp.SouthKafkaStreamsActor.Business
 import com.tesobe.obp.june2017._
 import com.typesafe.scalalogging.StrictLogging
+import io.circe.generic.auto._
+import io.circe.parser.decode
+import io.circe.syntax._
+import net.liftweb.json
+import net.liftweb.json.Extraction
+import net.liftweb.json.JsonAST.prettyRender
 
 import scala.concurrent.{ExecutionContext, Future}
-import io.circe.parser.decode
-import io.circe.generic.auto._
-import io.circe.syntax._
 
 /**
   * Responsible for processing requests from North Side using local json files as data sources.
@@ -29,7 +32,8 @@ import io.circe.syntax._
   * This software may also be distributed under a commercial license from TESOBE Ltd subject to separate terms.
   */
 class LocalProcessor(implicit executionContext: ExecutionContext, materializer: Materializer) extends StrictLogging with Config {
-
+  
+  implicit val formats = net.liftweb.json.DefaultFormats
   /**
     * Processes message that comes from generic 'Request'/'Response' topics.
     * It has to resolve version from request first and based on that employ corresponding Decoder to extract response.
@@ -62,12 +66,13 @@ class LocalProcessor(implicit executionContext: ExecutionContext, materializer: 
   def banksFn: Business = { msg =>
     /* call Decoder for extracting data from source file */
     logger.debug(s"Processing banksFn ${msg.record.value}")
-    val response: (GetBanks => Banks) = { q => com.tesobe.obp.june2017.Decoder.getBanks(q) }
-    val r = decode[GetBanks](msg.record.value()) match {
-      case Left(e) => throw new RuntimeException(" !!! --- This can not be empty, please compare the case class for both sides, only for debugging ");
-      case Right(x) => response(x).asJson.noSpaces
-    }
-    Future(msg, r)
+    for{
+      kafkaRecordValue <- Future(msg.record.value())
+      getBanks <- Future(Extraction.extract[GetBanks](json.parse(kafkaRecordValue)))
+      banksClass <- Future(Decoder.getBanks(getBanks)) //TODO, this can be the AKKA HTTP
+      banks <- Future(prettyRender(Extraction.decompose(banksClass)))
+    } yield 
+      (msg, banks) 
   }
 
   def bankFn: Business = { msg =>
