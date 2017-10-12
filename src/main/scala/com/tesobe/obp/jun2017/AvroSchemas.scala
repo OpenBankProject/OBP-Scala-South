@@ -9,8 +9,8 @@ import com.sksamuel.avro4s.SchemaFor
   * implicit val schemaForMyCaseClass = SchemaFor[MyCaseClass]
   *
   */
-object AvroSchemas {
-  implicit val schemaForGetBanks = SchemaFor[GetBanks]
-  implicit val schemaForBanks = SchemaFor[Banks]
-}
+//object AvroSchemas {
+//  implicit val schemaForGetBanks = SchemaFor[GetBanks]
+//  implicit val schemaForBanks = SchemaFor[Banks]
+//}
 
