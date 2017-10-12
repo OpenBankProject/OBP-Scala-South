@@ -13,7 +13,7 @@ import scala.collection.mutable.ListBuffer
 /**
   * Responsible for processing requests based on local example_import_june2017.json file.
   *
-  * Open Bank Project - Leumi Adapter
+  * Open Bank Project - Scala South Adapter
   * Copyright (C) 2016-2017, TESOBE Ltd.This program is free software: you can redistribute it and/or modify
   * it under the terms of the GNU Affero General Public License as published by
   * the Free Software Foundation, either version 3 of the License, or
@@ -104,6 +104,22 @@ trait Decoder extends MappedDecoder with Config{
       )
     )
   }
+
+
+  
+/*  def getBankAccountbyAccountId(getAccount: GetAccountbyAccountID): InboundBankAccount
+
+  def getBankAccountByAccountNumber(getAccount: GetAccountbyAccountNumber): InboundBankAccount
+
+  def getTransactions(getTransactionsRequest: GetTransactions): InboundTransactions
+
+  def getTransaction(getTransactionRequest: GetTransaction): InboundTransaction
+
+  def createTransaction(createTransactionRequest: CreateTransaction): InboundCreateTransactionId
+
+  def getToken(getTokenRequest: GetToken): InboundToken
+
+  def createChallenge(createChallenge: OutboundCreateChallengeJune2017): InboundCreateChallengeJune2017*/
 
   /*
    * Decodes example_import_june2017.json file to com.tesobe.obp.june2017.Example

@@ -8564,7 +8564,7 @@
         },
         "other_account_owner": {
           "type": "string",
-          "example": "Target bank type: 0-Leumi; 1-other bank"
+          "example": "Target bank type: 0-Scala South; 1-other bank"
         },
         "account_number": {
           "type": "string",
